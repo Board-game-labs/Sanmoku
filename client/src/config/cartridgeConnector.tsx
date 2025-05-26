@@ -17,9 +17,9 @@ const policies: SessionPolicies = {
     [SANMOKU_ADDRESS]: {
       methods: [
         { name: "initiate_game", entrypoint: "initiate_game" },
-        // { name: "join game", entrypoint: "join_game" },
-        // { name: "play move", entrypoint: "play_game" },
-        // { name: "restart game", entrypoint: "restart_game" },
+        { name: "join game", entrypoint: "join_game" },
+        { name: "play move", entrypoint: "play_game" },
+        { name: "restart game", entrypoint: "restart_game" },
       ],
     },
   },

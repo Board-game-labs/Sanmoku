@@ -35,7 +35,7 @@ export const Lobby = ({ setView, gameIdInput, setGameIdInput, createGame, joinGa
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button 
-            onClick={() => {setView('symbol-select'); joinGame()}}
+            onClick={() => {setView('game'); joinGame()}}
             className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition"
           >
             Join Game

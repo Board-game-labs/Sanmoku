@@ -24,6 +24,7 @@ async function main() {
     const sdk = await init<SchemaType>({
         client: {
             worldAddress: dojoConfig.manifest.world.address,
+            toriiUrl: "https://api.cartridge.gg/x/sanmoku/torii",
         },
         domain: {
             name: "WORLD_NAME",

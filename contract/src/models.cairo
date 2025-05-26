@@ -15,6 +15,11 @@ pub struct Moves {
     pub move_five: u32,
     pub counter: u32,
     pub turn : bool,
+    pub opp_move_one: u32,
+    pub opp_move_two: u32,
+    pub opp_move_three: u32,
+    pub opp_move_four: u32,
+    pub opp_move_five: u32,
 }
 
 #[derive(Drop, Serde, Debug)]

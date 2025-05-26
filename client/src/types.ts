@@ -1,6 +1,6 @@
 export interface GameState {
     board: (string | null)[];
-    currentPlayer: 'X' | 'O';
+    currentPlayer: 'X' | 'O' | null;
     winner: string | null;
     gameOver: boolean;
     playerSymbol: 'X' | 'O' | null;

@@ -21,6 +21,11 @@ export interface Moves {
     move_five: BigNumberish;
     counter: BigNumberish;
     turn: boolean;
+    opp_move_one: BigNumberish;
+    opp_move_two: BigNumberish;
+    opp_move_three: BigNumberish;
+    opp_move_four: BigNumberish;
+    opp_move_five: BigNumberish;
 }
 
 // Type definition for `MovesValue` struct
@@ -35,11 +40,27 @@ export interface MovesValue {
     move_five: BigNumberish;
     counter: BigNumberish;
     turn: boolean;
+    opp_move_one: BigNumberish;
+    opp_move_two: BigNumberish;
+    opp_move_three: BigNumberish;
+    opp_move_four: BigNumberish;
+    opp_move_five: BigNumberish;
 }
 
 // Type definition for `Board` struct
 export interface Board {
     game_id: BigNumberish;
+    a_1: BigNumberish;
+    a_2: BigNumberish;
+    a_3: BigNumberish;
+    b_1: BigNumberish;
+    b_2: BigNumberish;
+    b_3: BigNumberish;
+    c_1: BigNumberish;
+    c_2: BigNumberish;
+    c_3: BigNumberish;
+}
+export interface BoardValue {
     a_1: BigNumberish;
     a_2: BigNumberish;
     a_3: BigNumberish;
@@ -143,6 +164,7 @@ export interface SchemaType extends ISchemaType {
         Moves: WithFieldOrder<Moves>;
         MovesValue: WithFieldOrder<MovesValue>;
         Board: WithFieldOrder<Board>;
+        BoardValue: WithFieldOrder<BoardValue>;
         Game: WithFieldOrder<Game>;
         GameValue: WithFieldOrder<GameValue>;
         Fixed: WithFieldOrder<Fixed>;
@@ -219,7 +241,7 @@ export interface RestartedValue {
 export const schema: SchemaType = {
     sanmoku: {
         Moves: {
-            fieldOrder: ["player", "opponent", "game_id", "avatar_choice", "move_one", "move_two", "move_three", "move_four", "move_five", "counter", "turn"],
+            fieldOrder: ["player", "opponent", "game_id", "avatar_choice", "move_one", "move_two", "move_three", "move_four", "move_five", "counter", "turn", "opp_move_one", "opp_move_two", "opp_move_three", "opp_move_four", "opp_move_five"],
             player: "",
             opponent: "",
             game_id: 0,
@@ -231,9 +253,14 @@ export const schema: SchemaType = {
             move_five: 0,
             counter: 0,
             turn: false,
+            opp_move_one: 0,
+            opp_move_two: 0,
+            opp_move_three: 0,
+            opp_move_four: 0,
+            opp_move_five: 0,
         },
         MovesValue: {
-            fieldOrder: ["opponent", "game_id", "avatar_choice", "move_one", "move_two", "move_three", "move_four", "move_five", "counter", "turn"],
+            fieldOrder: ["opponent", "game_id", "avatar_choice", "move_one", "move_two", "move_three", "move_four", "move_five", "counter", "turn", "opp_move_one", "opp_move_two", "opp_move_three", "opp_move_four", "opp_move_five"],
             opponent: "",
             game_id: 0,
             avatar_choice: 0,
@@ -244,10 +271,27 @@ export const schema: SchemaType = {
             move_five: 0,
             counter: 0,
             turn: false,
+            opp_move_one: 0,
+            opp_move_two: 0,
+            opp_move_three: 0,
+            opp_move_four: 0,
+            opp_move_five: 0,
         },
         Board: {
             fieldOrder: ["game_id", "a_1", "a_2", "a_3", "b_1", "b_2", "b_3", "c_1", "c_2", "c_3"],
             game_id: "0",
+            a_1: "0",
+            a_2: "0",
+            a_3: "0",
+            b_1: "0",
+            b_2: "0",
+            b_3: "0",
+            c_1: "0",
+            c_2: "0",
+            c_3: "0",
+        },
+        BoardValue: {
+            fieldOrder: ["a_1", "a_2", "a_3", "b_1", "b_2", "b_3", "c_1", "c_2", "c_3"],
             a_1: "0",
             a_2: "0",
             a_3: "0",
@@ -378,6 +422,7 @@ export enum ModelsMapping {
     Moves = "sanmoku-Moves",
     MovesValue = "sanmoku-MovesValue",
     Board = "sanmoku-Board",
+    BoardValue = "sanmoku-BoardValue",
     Game = "sanmoku-Game",
     GameValue = "sanmoku-GameValue",
     Fixed = "sanmoku-Fixed",

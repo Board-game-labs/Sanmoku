@@ -82,7 +82,13 @@ pub mod actions {
                 moves.move_three = 404;
                 moves.move_four = 404;
                 moves.move_five = 404;
+                moves.opp_move_one = 404;
+                moves.opp_move_two = 404;
+                moves.opp_move_three = 404;
+                moves.opp_move_four = 404;
+                moves.opp_move_five = 404;
                 moves.turn = true;
+                moves.counter = 0;
                 board_stat.game_id = current_game_id;
             }else {
                 moves.player = player_one;
@@ -94,7 +100,13 @@ pub mod actions {
                 moves.move_three = 404;
                 moves.move_four = 404;
                 moves.move_five = 404;
+                moves.opp_move_one = 404;
+                moves.opp_move_two = 404;
+                moves.opp_move_three = 404;
+                moves.opp_move_four = 404;
+                moves.opp_move_five = 404;
                 moves.turn = true;
+                moves.counter = 0;
                 board_stat.game_id = current_game_id;
             }
             world.write_model(@moves);
@@ -111,7 +123,7 @@ pub mod actions {
             };
             world.write_model(@game);
             world.write_model(@new_game_id);
-            world.emit_event(@Gameinitiated { playeraddress: player_one, gameid: current_game_id });
+            world.emit_event(@Gameinitiated { playeraddress: player_one, gameid: current_game_id});
             current_game_id
         }
         fn join_game(ref self: ContractState, game_id: felt252) {
@@ -133,7 +145,13 @@ pub mod actions {
                 player_two_moves_stat.move_three = 404;
                 player_two_moves_stat.move_four = 404;
                 player_two_moves_stat.move_five = 404;
+                player_two_moves_stat.opp_move_one = 404;
+                player_two_moves_stat.opp_move_two = 404;
+                player_two_moves_stat.opp_move_three = 404;
+                player_two_moves_stat.opp_move_four = 404;
+                player_two_moves_stat.opp_move_five = 404;
                 player_two_moves_stat.turn = false;
+                player_two_moves_stat.counter = 0;
                 board_stat.game_id = game_stat.game_id;
                 player_one_moves_stat.opponent = player_two;
             }else if (player_one_moves_stat.avatar_choice == 'O'){
@@ -146,7 +164,13 @@ pub mod actions {
                 player_two_moves_stat.move_three = 404;
                 player_two_moves_stat.move_four = 404;
                 player_two_moves_stat.move_five = 404;
+                player_two_moves_stat.opp_move_one = 404;
+                player_two_moves_stat.opp_move_two = 404;
+                player_two_moves_stat.opp_move_three = 404;
+                player_two_moves_stat.opp_move_four = 404;
+                player_two_moves_stat.opp_move_five = 404;
                 player_two_moves_stat.turn = false;
+                player_two_moves_stat.counter = 0;
                 board_stat.game_id = game_stat.game_id;
                 player_one_moves_stat.opponent = player_two;
             }
@@ -166,16 +190,16 @@ pub mod actions {
             assert(game_stat.player_two_ != contract_address_const::<0>(), 'game not started');
             let mut board_state : Board = world.read_model(game_id);
             let mut player_moves : Moves = world.read_model(player);
-            assert(player_moves.turn == false, 'not your turn');
-            player_moves.turn = true;
+            assert(player_moves.turn == true, 'not your turn');
+            player_moves.turn = false;
             let opponent = player_moves.opponent;
             let mut opponent_moves : Moves = world.read_model(opponent);
-            opponent_moves.turn = false;
+            // opponent_moves.turn = true;
 
-            let (played_move_board_state, current_move_state) = compute_board_state(
-                board_state, player_moves, square
+            let (played_move_board_state, current_move_state, current_opponent_move_state) = compute_board_state(
+                board_state, player_moves, square, opponent_moves
             );
-
+            // current_opponent_move_state.turn = true;
             let result = check_victory(current_move_state);
             let mut response : felt252 = ''.into();
             if result == 1 && player_moves.avatar_choice == 'X' {
@@ -189,7 +213,7 @@ pub mod actions {
             }
             
             world.write_model(@current_move_state);
-            world.write_model(@opponent_moves);
+            world.write_model(@current_opponent_move_state);
             world.write_model(@game_stat);
             world.write_model(@played_move_board_state);
             world.emit_event(@Result { game_id: game_stat.game_id, result: response, winneraddress: game_stat.winner });
@@ -220,6 +244,13 @@ pub mod actions {
             player_two_moves_stat.move_three = 404;
             player_two_moves_stat.move_four = 404;
             player_two_moves_stat.move_five = 404;
+
+            player_two_moves_stat.opp_move_one = 404;
+            player_two_moves_stat.opp_move_two = 404;
+            player_two_moves_stat.opp_move_three = 404;
+            player_two_moves_stat.opp_move_four = 404;
+            player_two_moves_stat.opp_move_five = 404;
+            player_two_moves_stat.counter = 0;
                 
             //reset for player one
             player_one_moves_stat.move_one = 404;
@@ -227,6 +258,13 @@ pub mod actions {
             player_one_moves_stat.move_three = 404;
             player_one_moves_stat.move_four = 404;
             player_one_moves_stat.move_five = 404;
+
+            player_one_moves_stat.opp_move_one = 404;
+            player_one_moves_stat.opp_move_two = 404;
+            player_one_moves_stat.opp_move_three = 404;
+            player_one_moves_stat.opp_move_four = 404;
+            player_one_moves_stat.opp_move_five = 404;
+            player_one_moves_stat.counter = 0;
              
              //reset board 
              board_state.a_1 = '';
@@ -250,7 +288,8 @@ pub mod actions {
 
     }
     // Function to compute the board state and player moves
-    fn compute_board_state(mut board_state: Board, mut player_moves_state: Moves, square: Square) -> (Board, Moves) {
+    fn compute_board_state(mut board_state: Board, mut player_moves_state: Moves, square: Square, mut opponent_moves_state: Moves) -> (Board, Moves, Moves) {
+        opponent_moves_state.turn = true;
         //handle square selected here
         match square {
             Square::Top_Left(()) => {
@@ -259,14 +298,19 @@ pub mod actions {
                 //check current move count to set the moved piece accordingly here
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 0;
+                    opponent_moves_state.opp_move_one = 0;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 0;
+                    opponent_moves_state.opp_move_two = 0;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 0;
+                    opponent_moves_state.opp_move_three = 0;
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 0;
+                    opponent_moves_state.opp_move_four = 0;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 0;
+                    opponent_moves_state.opp_move_five = 0;
                 }
             },
             Square::Tops(()) => {
@@ -275,14 +319,19 @@ pub mod actions {
                 //check current move count to set the moved piece accordingly here
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 1;
+                    opponent_moves_state.opp_move_one = 1
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 1;
+                    opponent_moves_state.opp_move_two = 1;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 1;
+                    opponent_moves_state.opp_move_three = 1
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 1;
+                    opponent_moves_state.opp_move_four = 1;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 1;
+                    opponent_moves_state.opp_move_five = 1;
                 }
             },
             Square::Top_Right(()) => {
@@ -291,14 +340,19 @@ pub mod actions {
                 //check current move count to set the moved piece accordingly here
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 2;
+                    opponent_moves_state.opp_move_one = 2;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 2;
+                    opponent_moves_state.opp_move_two = 2;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 2;
+                    opponent_moves_state.opp_move_three = 2;
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 2;
+                    opponent_moves_state.opp_move_four = 2;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 2;
+                    opponent_moves_state.opp_move_five = 2;
                 }
             },
             Square::Left(()) => {
@@ -307,14 +361,19 @@ pub mod actions {
                 //check current move count to set the moved piece accordingly here
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 3;
+                    opponent_moves_state.opp_move_one = 3;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 3;
+                    opponent_moves_state.opp_move_two = 3;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 3;
+                    opponent_moves_state.opp_move_three = 3
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 3;
+                    opponent_moves_state.opp_move_four = 3;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 3;
+                    opponent_moves_state.opp_move_five = 3;
                 }
             },
             Square::Centre(()) => {
@@ -323,14 +382,19 @@ pub mod actions {
                 //check current move count to set the moved piece accordingly here
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 4;
+                    opponent_moves_state.opp_move_one = 4;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 4;
+                    opponent_moves_state.opp_move_two = 4;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 4;
+                    opponent_moves_state.opp_move_three = 4;
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 4;
+                    opponent_moves_state.opp_move_four = 4;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 4;
+                    opponent_moves_state.opp_move_five = 4;
                 }
             },
             Square::Right(()) => {
@@ -339,14 +403,19 @@ pub mod actions {
                 //check current move count to set the moved piece accordingly here
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 5;
+                    opponent_moves_state.opp_move_one = 5;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 5;
+                    opponent_moves_state.opp_move_two = 5;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 5;
+                    opponent_moves_state.opp_move_three = 5;
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 5;
+                    opponent_moves_state.opp_move_four = 5;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 5;
+                    opponent_moves_state.opp_move_five = 5;
                 }
             },
             Square::Bottom_Left(()) => {
@@ -355,14 +424,19 @@ pub mod actions {
                 //check current move count to set the moved piece accordingly here
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 6;
+                    opponent_moves_state.opp_move_one = 6;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 6;
+                    opponent_moves_state.opp_move_two = 6;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 6;
+                    opponent_moves_state.opp_move_three = 6;
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 6;
+                    opponent_moves_state.opp_move_four = 6;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 6;
+                    opponent_moves_state.opp_move_five = 6;
                 }
             },
             Square::Bottom(()) => {
@@ -370,14 +444,19 @@ pub mod actions {
                 board_state.c_2 = player_moves_state.avatar_choice;
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 7;
+                    opponent_moves_state.opp_move_one = 7;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 7;
+                    opponent_moves_state.opp_move_two = 7;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 7;
+                    opponent_moves_state.opp_move_three = 7;
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 7;
+                    opponent_moves_state.opp_move_four = 7;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 7;
+                    opponent_moves_state.opp_move_five = 7;
                 }
             },
             Square::Bottom_Right(()) => {
@@ -385,21 +464,26 @@ pub mod actions {
                 board_state.c_3 = player_moves_state.avatar_choice;
                 if player_moves_state.counter == 0 {
                     player_moves_state.move_one = 8;
+                    opponent_moves_state.opp_move_one = 8;
                 } else if player_moves_state.counter == 1 {
                     player_moves_state.move_two = 8;
+                    opponent_moves_state.opp_move_two = 8;
                 } else if player_moves_state.counter == 2 {
                     player_moves_state.move_three = 8;
+                    opponent_moves_state.opp_move_three = 8;
                 } else if player_moves_state.counter == 3 {
                     player_moves_state.move_four = 8;
+                    opponent_moves_state.opp_move_four = 8;
                 } else if player_moves_state.counter == 4 {
                     player_moves_state.move_five = 8;
+                    opponent_moves_state.opp_move_five = 8;
                 }
             },
         };
         //set move count after playing here
         player_moves_state.counter += 1;
         //return computed board and moves
-        (board_state, player_moves_state)
+        (board_state, player_moves_state,opponent_moves_state)
     }
 
     fn check_victory(mut current_moves_state: Moves) -> felt252 {

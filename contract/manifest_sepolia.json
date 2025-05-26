@@ -1329,7 +1329,7 @@
   "contracts": [
     {
       "address": "0x4553003e15c59ca569a2c7b39a19eb772e0258634a685421ab5a01b160fdde9",
-      "class_hash": "0x46988685bab2032f2ab468b0513f318eb3a98a6049d537b8ceaa4b0f7fc22e7",
+      "class_hash": "0x4c52f7d087df3c6aa80b130dc9a4d24b735b4a74c3d5998026db556a30b938a",
       "abi": [
         {
           "type": "impl",
@@ -1649,7 +1649,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x49389044f86ec26c4d32b7e761ffe44a06a36a988863bef02ece8469d821a7",
+      "class_hash": "0x374c02546e52995aabcd1afe72aaaa9b7727785715ea90ae8adf4fb983db5d",
       "tag": "sanmoku-Moves",
       "selector": "0x27b22276801040eb5b8e898bab56b4d0a002a66f783d3e03e7235efaed75c73"
     },

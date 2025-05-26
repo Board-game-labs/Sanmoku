@@ -90,7 +90,7 @@ export function setupWorld(provider: DojoProvider) {
     ): DojoCall => {
         return {
             contractName: "actions",
-            entrypoint: "play_game",
+            entrypoint: "restart_game",
             calldata: [gameid],
         };
     };  
